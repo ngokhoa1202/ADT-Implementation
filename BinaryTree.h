@@ -4,18 +4,16 @@
 #include <iostream>
 #include <algorithm>
 
-using namespace std;
-
 template<class T>
 class BinaryTree {
 protected:
   class Node;
 protected:
   Node* root;
-  int getHeightHelper(Node* root) const;
-  int getSizeHelper(Node* root) const;
-  T maxHelper() const;
-  T minHelper() const;
+  static int getHeightHelper(Node* root);
+  static int getSizeHelper(Node* root);
+  static T maxHelper(Node* root);
+  static T minHelper(Node* root);
 public:
   BinaryTree() : root{NULL} {}
   int getHeight() const;
@@ -35,34 +33,34 @@ protected:
 //=============================Protected functions================================
 
 template<class T>
-int BinaryTree<T>::getHeightHelper(Node* root) const {
+int BinaryTree<T>::getHeightHelper(Node* root) {
   if (root == NULL) return 0;
-  int heightOfLeft = this->getHeightHelper(root->left);
-  int heightOfRight = this->getHeightHelper(root->right);
+  int heightOfLeft = BinaryTree::getHeightHelper(root->left);
+  int heightOfRight = BinaryTree::getHeightHelper(root->right);
   return 1 + std::max(heightOfLeft, heightOfRight);
 }
 
 template<class T>
-int BinaryTree<T>::getSizeHelper(Node* root) const {
+int BinaryTree<T>::getSizeHelper(Node* root) {
   if (root == NULL) return 0;
-  int sizeOfLeft = this->getSizeHelper(root->left);
-  int sizeOfRight = this->getSizeHelper(root->right);
+  int sizeOfLeft = BinaryTree::getSizeHelper(root->left);
+  int sizeOfRight = BinaryTree::getSizeHelper(root->right);
   return 1 + sizeOfLeft + sizeOfRight;
 }
 
 template<class T>
-T BinaryTree<T>::maxHelper(Node* root) const {
+T BinaryTree<T>::maxHelper(Node* root) {
   if (root == NULL) return T();
-  T maxOfLeft = this->maxHelper(root->left);
-  T maxOfRight = this->maxHelper(root->right);
+  T maxOfLeft = BinaryTree::maxHelper(root->left);
+  T maxOfRight = BinaryTree::maxHelper(root->right);
   return std::max(root->data, std::max(maxOfLeft, maxOfRight));
 }
 
 template<class T>
-T BinaryTree<T>::minHelper(Node* root) const {
+T BinaryTree<T>::minHelper(Node* root) {
   if (root == NULL) return T();
-  T minOfLeft = this->minHelper(root->left);
-  T maxOfRight = this->minHelper(root->right);
+  T minOfLeft = BinaryTree::minHelper(root->left);
+  T maxOfRight = BinaryTree::minHelper(root->right);
   return std::min(root->data, std::min(minOfLeft, maxOfRight));
 }
 
@@ -70,22 +68,22 @@ T BinaryTree<T>::minHelper(Node* root) const {
 //===========================Public functions================================
 template<class T>
 int BinaryTree<T>::getHeight() const {
-  return this->getHeightHelper(this->root);
+  return BinaryTree::getHeightHelper(this->root);
 }
 
 template<class T>
 int BinaryTree<T>::getSize() const {
-  return this->getSizeHelper(this->root);
+  return BinaryTree::getSizeHelper(this->root);
 }
 
 template<class T>
 T BinaryTree<T>::max() const {
-  return this->maxHelper(this->root);
+  return BinaryTree::maxHelper(this->root);
 }
 
 template<class T>
 T BinaryTree<T>::min() const {
-  return this->minHelper(this->root);
+  return BinaryTree::minHelper(this->root);
 }
 
 

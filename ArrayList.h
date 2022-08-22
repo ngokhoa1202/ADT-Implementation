@@ -38,7 +38,7 @@ template<class T>
 void ArrayList<T>::checkIndex(int index, bool isAddFunc) const {
   if (isAddFunc) {
     if (index < 0 || index > this->count)
-      throw IndexOutOfRangeException()
+      throw IndexOutOfRangeException();
   }
   else if (index < 0 || index >= this->count)
     throw IndexOutOfRangeException();
