@@ -2,6 +2,7 @@
 #define BINARY_TREE_H
 
 #include <iostream>
+#include <vector>
 #include <queue>
 #include "error.h"
 
@@ -9,32 +10,34 @@ template<class T>
 class BinaryTree {
 protected:
   class Node;
-protected:
+public:
   Node* root;
   virtual void add(const T& element) = 0;
   virtual bool deleteNode(const T& item) = 0;
-  static int getSize(Node* root);
-  static int getHeight(Node* root);
-  static void getMax(Node* root, T& max);
-  static void getMin(Node* root, T& min);
-  static void inOrderPrintHelper(Node* root);
-  static void preOrderPrintHelper(Node* root);
-  static void postOrderPrintHelper(Node* root);
-  static void containsHelper(Node* root, const T& item, bool& containFlag);
+  static int getSize(Node* root); // O(n) n: numbers of nodes
+  static int getHeight(Node* root); // O(n)
+  static void getMax(Node* root, T& max); // O(n)
+  static void getMin(Node* root, T& min); // O(n)
+  static void printInOrderHelper(Node* root); // O(n)
+  static void printPreOrderHelper(Node* root); // O(n)
+  static void printPostOrderHelper(Node* root); // O(n)
+  static void containsHelper(Node* root, const T& item, bool& containFlag); // O(n)
+  static bool isBalancedHelper(Node* root);
 public:
   BinaryTree() : root{NULL} {}
   int size() const;
   int height() const;
   int depth() const;
-  int getHeightOf(const T& element) const; // later
-  void inOrderPrint() const;
-  void preOrderPrint() const;
-  void postOrderPrint() const;
-  void levelOrderPrint() const;
+  void printInOrder() const;
+  void printPreOrder() const;
+  void printPostOrder() const;
+  void printLevelOrder() const;
   virtual bool contains(const T& item) const;
   bool isEmpty() const;
   virtual T min() const;
   virtual T max() const;
+  bool isBalanced() const;
+  void display() const;
 protected:
   class Node {
   public:
@@ -89,29 +92,29 @@ void BinaryTree<T>::getMin(Node* root, T& min) {
 }
 
 template<class T>
-void BinaryTree<T>::inOrderPrintHelper(Node* root) {
+void BinaryTree<T>::printInOrderHelper(Node* root) {
   if (root == NULL) return;
 
-  BinaryTree::inOrderPrintHelper(root->left);
+  BinaryTree::printInOrderHelper(root->left);
   std::cout << root->data << ' ';
-  BinaryTree::inOrderPrintHelper(root->right);
+  BinaryTree::printInOrderHelper(root->right);
 }
 
 template<class T>
-void BinaryTree<T>::preOrderPrintHelper(Node* root) {
+void BinaryTree<T>::printPreOrderHelper(Node* root) {
   if (root == NULL) return;
 
   std::cout << root->data << ' ';
-  BinaryTree::preOrderPrintHelper(root->left);
-  BinaryTree::preOrderPrintHelper(root->right);
+  BinaryTree::printPreOrderHelper(root->left);
+  BinaryTree::printPreOrderHelper(root->right);
 }
 
 template<class T>
-void BinaryTree<T>::postOrderPrintHelper(Node* root) {
+void BinaryTree<T>::printPostOrderHelper(Node* root) {
   if (root == NULL) return;
 
-  BinaryTree::postOrderPrintHelper(root->left);
-  BinaryTree::postOrderPrintHelper(root->right);
+  BinaryTree::printPostOrderHelper(root->left);
+  BinaryTree::printPostOrderHelper(root->right);
   std::cout << root->data << ' ';
 }
 
@@ -130,8 +133,23 @@ void BinaryTree<T>::containsHelper(Node* root, const T& item,  bool& containsFla
   BinaryTree::containsHelper(root->left, item, containsFlag);
   if (containsFlag) return; // use to break func early
   BinaryTree::containsHelper(root->right, item, containsFlag);
-
 }
+
+template<class T>  
+bool BinaryTree<T>::isBalancedHelper(Node* root) {
+  if (root == NULL) return true; 
+  
+  int heightOfLeft = BinaryTree::getHeight(root->left);
+  int heightOfRight = BinaryTree::getHeight(root->right);
+
+  if (std::abs(heightOfLeft-heightOfRight) <= 1 
+      && BinaryTree::isBalancedHelper(root->left)
+      && BinaryTree::isBalancedHelper(root->right)) 
+      return true;
+  
+  return false;
+}   
+
 //==============================Public member functions===============================================================
 template<class T>
 int BinaryTree<T>::size() const { 
@@ -149,28 +167,28 @@ int BinaryTree<T>::depth() const {
 }
 
 template<class T>  
-void BinaryTree<T>::inOrderPrint() const {
+void BinaryTree<T>::printInOrder() const {
   std::cout << "In-order traversal result: ";
-  BinaryTree::inOrderPrintHelper(this->root);
+  BinaryTree::printInOrderHelper(this->root);
   std::cout << '\n';
 }
 
 template<class T>
-void BinaryTree<T>::preOrderPrint() const {
+void BinaryTree<T>::printPreOrder() const {
   std::cout << "Pre-Order Tranversal result: ";
-  BinaryTree::preOrderPrintHelper(this->root);
+  BinaryTree::printPreOrderHelper(this->root);
   std::cout << '\n';
 }
 
 template<class T>
-void BinaryTree<T>::postOrderPrint() const {
+void BinaryTree<T>::printPostOrder() const {
   std::cout << "Post-order traversal result: ";
-  BinaryTree::postOrderPrintHelper(this->root);
+  BinaryTree::printPostOrderHelper(this->root);
   std::cout << '\n';
 }
 
 template<class T>
-void BinaryTree<T>::levelOrderPrint() const {
+void BinaryTree<T>::printLevelOrder() const {
   std::cout << "Level-order traversal result: ";
 
   if (this->isEmpty()) return;
@@ -215,5 +233,10 @@ T BinaryTree<T>::max() const {
   T min;
   BinaryTree::getMin(this->root, min);
   return min;
+}
+
+template<class T>
+bool BinaryTree<T>::isBalanced() const {
+  return BinaryTree::isBalancedHelper(this->root);
 }
 #endif
